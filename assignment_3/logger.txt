@@ -1,0 +1,2 @@
+[INFO] app started
+[ERROR] Hello world!!!

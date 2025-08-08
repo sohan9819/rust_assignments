@@ -2,7 +2,7 @@ use std::{
     fmt::{Display as FmtDisplay, Formatter, Result},
     fs::File,
     io::{Read, Write},
-    path::{self, Display, Path},
+    path::{Display, Path},
 };
 
 #[derive(Debug)]
@@ -85,6 +85,12 @@ impl Logger for FileLogger {
             Err(why) => panic!("couldn't write to {}: {}", self.display, why),
             Ok(_) => println!("successfully wrote to {}", self.display),
         }
+    }
+}
+
+impl Drop for FileLogger {
+    fn drop(&mut self) {
+        println!("File Logger was dropped");
     }
 }
 
