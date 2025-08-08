@@ -2,7 +2,7 @@ use std::{
     fmt::{Display as FmtDisplay, Formatter, Result},
     fs::File,
     io::{Read, Write},
-    path::{Display, Path},
+    path::{self, Display, Path},
 };
 
 #[derive(Debug)]
@@ -41,6 +41,7 @@ struct FileLogger {
     file_name: &'static str,
     file: File,
     display: Display<'static>,
+    path: &'static Path,
 }
 impl FileLogger {
     fn new(file_name: &'static str) -> Self {
@@ -57,13 +58,18 @@ impl FileLogger {
             file_name,
             file,
             display,
+            path,
         }
     }
 
     fn read_logs(&mut self) {
         // Read the file contents into a string, returns `io::Result<usize>`
+        let mut file = match File::open(&self.path) {
+            Err(why) => panic!("couldn't open {}: {}", self.display, why),
+            Ok(file) => file,
+        };
         let mut s = String::new();
-        match self.file.read_to_string(&mut s) {
+        match file.read_to_string(&mut s) {
             Err(why) => panic!("couldn't read {}: {}", self.display, why),
             Ok(_) => println!("{} contains:\n{}", self.display, s),
         }
